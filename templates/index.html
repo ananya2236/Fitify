@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fitify - Your Health Companion</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 🌈 Gradient Background Animation */
+    body {
+      background: linear-gradient(-45deg, #0f172a, #1e293b, #164e63, #1e3a8a);
+      background-size: 400% 400%;
+      animation: gradientShift 18s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* 🌟 Floating Orb Animation */
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* 🌟 Fade Slide Animation */
+    .fade-slide {
+      animation: fadeSlide 1s ease forwards;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .slide-in {
+    animation: slideIn 1s ease forwards;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  </style>
+</head>
+<body class="text-white flex flex-col min-h-screen relative overflow-x-hidden">
+
+
+  <!-- 🌟 Background Orbs -->
+  <div class="absolute top-10 left-10 w-32 h-32 bg-green-500 rounded-full opacity-20 float blur-2xl"></div>
+  <div class="absolute bottom-20 right-20 w-40 h-40 bg-orange-500 rounded-full opacity-20 float blur-2xl"></div>
+  <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-blue-500 rounded-full opacity-20 float blur-2xl"></div>
+
+  <!-- 🌟 HEADER -->
+  <header class="bg-gray-900/60 backdrop-blur-lg shadow-lg z-10 relative">
+    <div class="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
+      <h1 class="text-2xl font-bold text-green-400">🏋️ Fitify</h1>
+      <nav>
+        <ul class="flex space-x-6 items-center">
+          <li><a href="#" class="hover:text-green-300 transition">Home</a></li>
+          <li><a href="#about" class="hover:text-green-300 transition">About</a></li>
+          <li>
+            <button class="hover:text-green-300 transition">
+              ⚙️
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 🌟 MAIN -->
+  <main class="flex-grow flex items-center justify-center px-6 py-10 relative z-10">
+  
+    <!-- Landing Page -->
+    <div id="landing" class="text-center fade-slide">
+      <h2 class="text-5xl font-extrabold text-green-400 mb-4 animate-bounce">Welcome to Fitify</h2>
+      <p class="text-lg text-gray-200 mb-6">Your AI-powered health & fitness companion.</p>
+      <button id="startBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl transition transform hover:scale-105 shadow-lg">
+        🚀 Let’s Get Started
+      </button>
+    </div>
+
+    <!-- Form + Results Container -->
+    <div id="healthWrapper" class="hidden w-full max-w-6xl flex flex-col items-center transition-all duration-700 ease-in-out">
+
+      <!-- Left: Form -->
+      <div id="formContainer" class="w-full md:w-1/2 bg-gray-900/70 backdrop-blur-lg shadow-xl rounded-2xl p-8 fade-slide">
+        <h2 class="text-3xl font-bold text-green-400 mb-6 text-center">Health Checkup</h2>
+
+        <form id="healthForm" class="space-y-4">
+          <input type="number" id="height" placeholder="Height (cm)" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+          <input type="number" id="weight" placeholder="Weight (kg)" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+          <input type="number" id="age" placeholder="Age" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+
+          <select id="gender" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+            <option value="">Select Gender</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+          </select>
+
+          <input type="text" id="allergies" placeholder="Allergies (comma separated)" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+
+          <select id="goal" class="w-full p-3 rounded-xl bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400">
+            <option value="">Select Goal</option>
+            <option value="weight_loss">Weight Loss</option>
+            <option value="muscle_gain">Muscle Gain</option>
+            <option value="fitness">General Fitness</option>
+          </select>
+
+          <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition transform hover:scale-105 shadow-lg">
+            Get Recommendation
+          </button>
+        </form>
+      </div>
+
+      <!-- Right: Results -->
+      <div id="result" class="hidden w-full md:w-1/2 p-6 rounded-2xl shadow-2xl 
+          bg-white/10 backdrop-blur-lg border border-white/20 
+          transform transition duration-700 ease-out opacity-0 scale-90">
+      </div>
+    </div>
+  </main>
+
+
+
+  <!-- 🌟 ABOUT -->
+  <section id="about" class="bg-gray-900/60 backdrop-blur-lg py-16 px-6 text-center fade-slide">
+    <h2 class="text-4xl font-bold text-orange-400 mb-4">About Fitify</h2>
+    <p class="max-w-3xl mx-auto text-gray-300 leading-relaxed">
+      Fitify is your smart companion for health and fitness. We use intelligent rules and recommendations 
+      to provide personalized diet and workout plans based on your BMI, lifestyle, and health goals.  
+      Our mission is simple: make fitness guidance accessible, personalized, and fun! 
+    </p>
+  </section>
+
+  <!-- 🌟 FOOTER -->
+  <footer class="bg-gray-900/70 backdrop-blur-lg text-center py-4 relative z-10">
+    <p class="text-gray-400">© 2025 Fitify | Stay Fit. Stay Strong. | Built by <span class="text-green-400 font-semibold">Ananya Singh</span></p>
+  </footer>
+
+  <!-- JS -->
+  <script>
+  // Step 1: Start button → show form in center
+  document.getElementById("startBtn").addEventListener("click", () => {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("healthWrapper").classList.remove("hidden");
+  });
+
+  // Step 2: On submit → form shifts left, results show right
+  document.getElementById("healthForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      height: parseFloat(document.getElementById("height").value),
+      weight: parseFloat(document.getElementById("weight").value),
+      age: parseInt(document.getElementById("age").value),
+      gender: document.getElementById("gender").value,
+      allergies: document.getElementById("allergies").value.split(",").map(a => a.trim()).filter(a => a !== ""),
+      goal: document.getElementById("goal").value
+    };
+
+    try {
+      const res = await fetch("/recommend", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) throw new Error("API request failed");
+      const result = await res.json();
+
+      const wrapper = document.getElementById("healthWrapper");
+      wrapper.classList.remove("flex-col", "items-center");
+      wrapper.classList.add("md:flex-row", "justify-between");
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.classList.remove("hidden");
+      resultDiv.classList.add("slide-in");
+      resultDiv.innerHTML = `
+        <h3 class="text-2xl font-bold text-green-300 mb-4 animate-pulse">Your Results</h3>
+        <p><strong>BMI:</strong> ${result.bmi} (${result.category})</p>
+        <div class="bg-gray-700 rounded-full h-3 w-full overflow-hidden mt-2 mb-4">
+          <div class="bg-green-400 h-3 rounded-full transition-all duration-1000" 
+               style="width:${Math.min(result.bmi/40*100,100)}%"></div>
+        </div>
+
+        <h4 class="mt-4 text-lg font-semibold text-orange-300">🥗 Diet Plan</h4>
+        <div class="grid grid-cols-2 gap-3">
+          ${result.diet_plan.map(food => `
+            <div class="p-3 bg-gray-700/60 rounded-xl hover:scale-105 transition">${food}</div>
+          `).join("")}
+        </div>
+
+        <h4 class="mt-4 text-lg font-semibold text-blue-300">💪 Workout Plan</h4>
+        <div class="grid grid-cols-2 gap-3">
+          ${result.workout_plan.map(workout => `
+            <div class="p-3 bg-gray-700/60 rounded-xl hover:scale-105 transition">${workout}</div>
+          `).join("")}
+        </div>
+      `;
+    } catch (error) {
+      const resultDiv = document.getElementById("result");
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = `<p class="text-red-400">⚠️ Failed to fetch recommendations. Please try again.</p>`;
+    }
+  });
+</script>
+
+</body>
+</html>
