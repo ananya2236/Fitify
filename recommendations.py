@@ -1,20 +1,23 @@
+# recommendations.py
 import random
 
 def calculate_bmi(weight, height):
     return round(weight / (height/100)**2, 2)
 
 def generate_recommendation(data):
-    height = data.get("height")
-    weight = data.get("weight")
+    height = data.get("height", 0) or 0
+    weight = data.get("weight", 0) or 0
     age = data.get("age")
     gender = data.get("gender")
-    allergies = data.get("allergies", [])
-    goal = data.get("goal")
+    allergies = [a.lower() for a in (data.get("allergies") or [])]
+    goal = data.get("goal") or "fitness"
 
     bmi = calculate_bmi(weight, height)
 
     # BMI Category
-    if bmi < 18.5:
+    if bmi <= 0:
+        category = "Unknown"
+    elif bmi < 18.5:
         category = "Underweight"
     elif 18.5 <= bmi < 25:
         category = "Normal"
@@ -23,23 +26,25 @@ def generate_recommendation(data):
     else:
         category = "Obese"
 
-    # Expanded diet pools
+    # Pools (expand anytime)
     diets = {
         "weight_loss": [
             "Oats with fruits", "Grilled chicken", "Salads", "Green tea",
-            "Vegetable soup", "Boiled eggs", "Smoothies", "Brown rice with veggies"
+            "Vegetable soup", "Boiled eggs", "Quinoa salad", "Brown rice with veggies",
+            "Steamed fish", "Lentil soup", "Mixed greens & lean protein"
         ],
         "muscle_gain": [
             "Eggs", "Brown rice", "Lentils", "Protein shake",
-            "Chicken breast", "Greek yogurt", "Peanut butter toast", "Tofu curry"
+            "Chicken breast", "Greek yogurt", "Peanut butter toast", "Tofu curry",
+            "Cottage cheese", "Salmon", "Beef stir-fry"
         ],
         "fitness": [
             "Smoothies", "Vegetable soups", "Whole grains", "Nuts",
-            "Fruit salad", "Avocado toast", "Steamed fish", "Mixed sprouts"
+            "Fruit salad", "Avocado toast", "Steamed fish", "Mixed sprouts",
+            "Oat pancakes", "Chia pudding"
         ]
     }
 
-    # Expanded workout pools
     workouts = {
         "weight_loss": [
             "30 min jogging", "HIIT cardio", "Planks", "Jump rope",
@@ -55,12 +60,38 @@ def generate_recommendation(data):
         ]
     }
 
-    # Select random 3–4 items per request
-    diet_plan = random.sample(diets.get(goal, ["Balanced meal plan"]), k=3)
-    workout_plan = random.sample(workouts.get(goal, ["Regular exercise"]), k=3)
+    # BMI-aware tweaks: if obese or overweight, bias toward weight_loss pool
+    if category in ("Overweight", "Obese") and goal != "weight_loss":
+        diet_pool = list({*diets.get(goal, []), *diets.get("weight_loss", [])})
+        workout_pool = list({*workouts.get(goal, []), *workouts.get("weight_loss", [])})
+    elif category == "Underweight" and goal != "muscle_gain":
+        diet_pool = list({*diets.get(goal, []), *diets.get("muscle_gain", [])})
+        workout_pool = workouts.get(goal, [])
+    else:
+        diet_pool = diets.get(goal, diets.get("fitness"))
+        workout_pool = workouts.get(goal, workouts.get("fitness"))
 
-    # Allergy filter
-    diet_plan = [food for food in diet_plan if not any(allergy.lower() in food.lower() for allergy in allergies)]
+    # Allergy filter (remove items containing allergy substrings)
+    def filter_allergies(items):
+        out = []
+        for it in items:
+            lower = it.lower()
+            if not any(allergy in lower for allergy in allergies if allergy):
+                out.append(it)
+        return out
+
+    diet_pool = filter_allergies(diet_pool)
+    workout_pool = filter_allergies(workout_pool)
+
+    # Random sample with safe fallback
+    def pick_random(pool, k=3):
+        if not pool:
+            return []
+        k = min(k, len(pool))
+        return random.sample(pool, k)
+
+    diet_plan = pick_random(diet_pool, k=4)
+    workout_plan = pick_random(workout_pool, k=4)
 
     return {
         "bmi": bmi,
